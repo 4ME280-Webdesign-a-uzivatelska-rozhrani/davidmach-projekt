@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Náhodný generátor filmů</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    max-width: 600px;
+    margin: auto;
+    background: #f0f0f0;
+  }
+  .film {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 6px rgba(0,0,0,0.1);
+  }
+  h1 {
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+  <h1>Náhodný film</h1>
+  <div id="film" class="film">
+    Načítám...
+  </div>
+
+<script>
+const BIN_ID = "68389d4e8561e97a501d339a";
+const API_KEY = "$2a$10$7v4XUXYeaXRof8zv13jvuObZzcc2kf57qsOMqfyRVFg1K5aVBGOT6";
+
+async function nactiFilmy() {
+  try {
+    const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+      headers: {
+        'X-Master-Key': API_KEY
+      }
+    });
+    if (!res.ok) throw new Error('Nepodařilo se načíst data z JSONBin');
+    const json = await res.json();
+    return json.record; // předpokládáme, že data jsou v record jako pole filmů
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
+}
+
+function zobrazNahodnyFilm(filmy) {
+  if (!filmy || filmy.length === 0) {
+    document.getElementById('film').textContent = 'Nenalezena žádná data.';
+    return;
+  }
+  const nahodny = filmy[Math.floor(Math.random() * filmy.length)];
+  document.getElementById('film').innerHTML = `
+    <h2>${nahodny.název}</h2>
+    <p><strong>Rok:</strong> ${nahodny.rok}</p>
+    <p><strong>Žánr:</strong> ${nahodny.žánr}</p>
+    <p><strong>Režisér:</strong> ${nahodny.režisér ? nahodny.režisér : 'neuveden'}</p>
+  `;
+}
+
+async function init() {
+  const filmy = await nactiFilmy();
+  zobrazNahodnyFilm(filmy);
+}
+
+init();
+</script>
+
+</body>
+</html>
