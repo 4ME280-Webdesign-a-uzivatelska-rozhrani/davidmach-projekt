@@ -5,104 +5,92 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>ČSFD TOP 100 FILMŮ</title>
 <style>
-  /* Reset */
-  * {
-    box-sizing: border-box;
-  }
-
   body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #141e30, #243b55);
-    color: #f0f0f0;
+    background-color: #f7f7f7;
+    color: #222;
     margin: 0;
     padding: 2rem;
-    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
+    min-height: 100vh;
   }
 
   .container {
-    background: rgba(20, 30, 48, 0.9);
-    padding: 2.5rem 3rem;
-    border-radius: 20px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.6);
-    max-width: 420px;
+    background-color: #fff;
+    padding: 2rem 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    max-width: 400px;
     width: 100%;
     text-align: center;
-    transition: transform 0.3s ease;
-  }
-  .container:hover {
-    transform: scale(1.03);
   }
 
   h1 {
-    font-size: 2.5rem;
+    font-weight: 700;
+    font-size: 2rem;
     margin-bottom: 1.5rem;
-    color: #ffcc29;
-    text-shadow: 0 0 10px #ffcc29;
+    color: #333;
     user-select: none;
   }
 
   #film h2 {
-    font-size: 2rem;
+    font-size: 1.8rem;
     margin: 0 0 1rem 0;
-    color: #ff6f61;
-    text-shadow: 0 0 8px #ff6f61;
+    color: #007acc;
   }
 
   #film p {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     margin: 0.5rem 0;
-    color: #dcdcdc;
+    color: #555;
   }
 
   #novyFilmBtn {
     margin-top: 2rem;
-    background: #ff6f61;
+    background-color: #007acc;
+    color: white;
     border: none;
-    padding: 0.85rem 2rem;
-    font-size: 1.2rem;
+    padding: 0.75rem 2rem;
+    font-size: 1.1rem;
     font-weight: 600;
-    border-radius: 50px;
-    color: #fff;
+    border-radius: 8px;
     cursor: pointer;
-    box-shadow: 0 5px 15px rgba(255,111,97,0.6);
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    transition: background-color 0.25s ease;
     user-select: none;
   }
   #novyFilmBtn:hover {
-    background-color: #ff9e8b;
-    box-shadow: 0 7px 20px rgba(255,158,139,0.8);
+    background-color: #005fa3;
   }
   #novyFilmBtn:active {
-    transform: scale(0.98);
+    background-color: #00457a;
   }
 
   #loading {
     margin-top: 1rem;
     font-style: italic;
-    color: #aaa;
+    color: #999;
     min-height: 1.2em;
   }
 
   @media (max-width: 480px) {
     .container {
-      padding: 1.8rem 2rem;
+      padding: 1.5rem 1.8rem;
       max-width: 95vw;
     }
     h1 {
-      font-size: 2rem;
+      font-size: 1.6rem;
     }
     #film h2 {
-      font-size: 1.6rem;
+      font-size: 1.4rem;
     }
     #film p {
       font-size: 1rem;
     }
     #novyFilmBtn {
       font-size: 1rem;
-      padding: 0.7rem 1.5rem;
+      padding: 0.6rem 1.5rem;
     }
   }
 </style>
@@ -163,4 +151,3 @@
 </script>
 </body>
 </html>
-
