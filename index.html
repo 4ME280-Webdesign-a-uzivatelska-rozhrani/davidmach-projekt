@@ -3,73 +3,164 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Náhodný generátor filmů</title>
+<title>ČSFD TOP 100 FILMŮ</title>
 <style>
+  /* Reset */
+  * {
+    box-sizing: border-box;
+  }
+
   body {
-    font-family: Arial, sans-serif;
-    padding: 20px;
-    max-width: 600px;
-    margin: auto;
-    background: #f0f0f0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #141e30, #243b55);
+    color: #f0f0f0;
+    margin: 0;
+    padding: 2rem;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
-  .film {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 6px rgba(0,0,0,0.1);
-  }
-  h1 {
+
+  .container {
+    background: rgba(20, 30, 48, 0.9);
+    padding: 2.5rem 3rem;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+    max-width: 420px;
+    width: 100%;
     text-align: center;
+    transition: transform 0.3s ease;
+  }
+  .container:hover {
+    transform: scale(1.03);
+  }
+
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    color: #ffcc29;
+    text-shadow: 0 0 10px #ffcc29;
+    user-select: none;
+  }
+
+  #film h2 {
+    font-size: 2rem;
+    margin: 0 0 1rem 0;
+    color: #ff6f61;
+    text-shadow: 0 0 8px #ff6f61;
+  }
+
+  #film p {
+    font-size: 1.2rem;
+    margin: 0.5rem 0;
+    color: #dcdcdc;
+  }
+
+  #novyFilmBtn {
+    margin-top: 2rem;
+    background: #ff6f61;
+    border: none;
+    padding: 0.85rem 2rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    border-radius: 50px;
+    color: #fff;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(255,111,97,0.6);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    user-select: none;
+  }
+  #novyFilmBtn:hover {
+    background-color: #ff9e8b;
+    box-shadow: 0 7px 20px rgba(255,158,139,0.8);
+  }
+  #novyFilmBtn:active {
+    transform: scale(0.98);
+  }
+
+  #loading {
+    margin-top: 1rem;
+    font-style: italic;
+    color: #aaa;
+    min-height: 1.2em;
+  }
+
+  @media (max-width: 480px) {
+    .container {
+      padding: 1.8rem 2rem;
+      max-width: 95vw;
+    }
+    h1 {
+      font-size: 2rem;
+    }
+    #film h2 {
+      font-size: 1.6rem;
+    }
+    #film p {
+      font-size: 1rem;
+    }
+    #novyFilmBtn {
+      font-size: 1rem;
+      padding: 0.7rem 1.5rem;
+    }
   }
 </style>
 </head>
 <body>
-  <h1>Náhodný film</h1>
-  <div id="film" class="film">
-    Načítám...
+  <div class="container">
+    <h1>ČSFD TOP 100 FILMŮ</h1>
+    <div id="film">Načítám film...</div>
+    <button id="novyFilmBtn">Další film</button>
+    <div id="loading"></div>
   </div>
 
 <script>
-const BIN_ID = "68389d4e8561e97a501d339a";
-const API_KEY = "$2a$10$7v4XUXYeaXRof8zv13jvuObZzcc2kf57qsOMqfyRVFg1K5aVBGOT6";
+  const binId = '68389d4e8561e97a501d339a';
+  const apiKey = '$2a$10$7v4XUXYeaXRof8zv13jvuObZzcc2kf57qsOMqfyRVFg1K5aVBGOT6';
 
-async function nactiFilmy() {
-  try {
-    const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
-      headers: {
-        'X-Master-Key': API_KEY
-      }
-    });
-    if (!res.ok) throw new Error('Nepodařilo se načíst data z JSONBin');
-    const json = await res.json();
-    return json.record; // předpokládáme, že data jsou v record jako pole filmů
-  } catch (e) {
-    console.error(e);
-    return null;
+  let filmy = [];
+
+  async function nactiFilmy() {
+    document.getElementById('loading').textContent = 'Načítám data...';
+    try {
+      const response = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, {
+        headers: {
+          'X-Master-Key': apiKey
+        }
+      });
+      if (!response.ok) throw new Error('Chyba při načítání dat');
+      const data = await response.json();
+      filmy = data.record || [];
+      document.getElementById('loading').textContent = '';
+      zobrazNahodnyFilm();
+    } catch (e) {
+      document.getElementById('film').textContent = 'Nepodařilo se načíst filmy :(';
+      document.getElementById('loading').textContent = '';
+      console.error(e);
+    }
   }
-}
 
-function zobrazNahodnyFilm(filmy) {
-  if (!filmy || filmy.length === 0) {
-    document.getElementById('film').textContent = 'Nenalezena žádná data.';
-    return;
+  function zobrazNahodnyFilm() {
+    if (!filmy.length) {
+      document.getElementById('film').textContent = 'Nenalezena žádná data.';
+      return;
+    }
+    const nahodny = filmy[Math.floor(Math.random() * filmy.length)];
+    document.getElementById('film').innerHTML = `
+      <h2>${nahodny.nazev || 'neuveden'}</h2>
+      <p><strong>Rok:</strong> ${nahodny.rok || 'neuveden'}</p>
+      <p><strong>Žánr:</strong> ${nahodny.zanr || 'neuveden'}</p>
+      <p><strong>Režisér:</strong> ${nahodny.reziser1 || 'neuveden'}</p>
+    `;
   }
-  const nahodny = filmy[Math.floor(Math.random() * filmy.length)];
-  document.getElementById('film').innerHTML = `
-    <h2>${nahodny.název}</h2>
-    <p><strong>Rok:</strong> ${nahodny.rok}</p>
-    <p><strong>Žánr:</strong> ${nahodny.žánr}</p>
-    <p><strong>Režisér:</strong> ${nahodny.režisér ? nahodny.režisér : 'neuveden'}</p>
-  `;
-}
 
-async function init() {
-  const filmy = await nactiFilmy();
-  zobrazNahodnyFilm(filmy);
-}
+  document.getElementById('novyFilmBtn').addEventListener('click', () => {
+    zobrazNahodnyFilm();
+  });
 
-init();
+  window.onload = nactiFilmy;
 </script>
-
 </body>
 </html>
+
