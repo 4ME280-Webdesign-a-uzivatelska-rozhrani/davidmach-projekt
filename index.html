@@ -56,7 +56,7 @@
 </head>
 <body>
 <div id="terminal"></div>
-<div id="pressKey">Press any key to continue...</div>
+<div id="pressKey" style="display:none;">Press any key to continue...</div>
 <img id="finalImage" src="placeholder.png" alt="PF FIS 2026">
 
 <script>
@@ -64,7 +64,6 @@ const terminal = document.getElementById("terminal");
 const finalImage = document.getElementById("finalImage");
 const pressKey = document.getElementById("pressKey");
 
-// ---------- Lines ----------
 const lines = [
   "C:\\FIS> run PF2026.exe",
   "Initializing PF2026.exe ...",
@@ -75,7 +74,6 @@ const lines = [
   "PF 2026 — Fakulta informatiky a statistiky"
 ];
 
-// ---------- Cursor ----------
 const cursor = document.createElement("span");
 cursor.id = "cursor";
 terminal.appendChild(cursor);
@@ -98,14 +96,15 @@ function typeLine(line, delay = 40) {
   });
 }
 
-// ---------- Terminal animation ----------
+// ---------- Sequential typing ----------
 async function runTerminal() {
-  pressKey.style.display = "none";
   for (const line of lines) {
     await typeLine(line);
     await new Promise(r => setTimeout(r, 300));
   }
-  await showLoadingBar();
+  pressKey.style.display = "block";
+  document.body.addEventListener("keydown", startLoading);
+  document.body.addEventListener("click", startLoading);
 }
 
 // ---------- Loading bar ----------
@@ -116,16 +115,19 @@ async function showLoadingBar() {
   let progress = 0;
   const total = 30;
 
-  const interval = setInterval(() => {
-    if (progress < total) {
-      barLine.textContent = `Loading final image: [${"=".repeat(progress)}${" ".repeat(total - progress)}] ${Math.floor((progress / total)*100)}%`;
-      progress++;
-    } else {
-      clearInterval(interval);
-      barLine.textContent = `Loading final image: [${"=".repeat(total)}] 100%\n`;
-      flashScreen();
-    }
-  }, 100);
+  return new Promise(resolve => {
+    const interval = setInterval(() => {
+      if (progress < total) {
+        barLine.textContent = `Loading final image: [${"=".repeat(progress)}${" ".repeat(total - progress)}] ${Math.floor((progress / total)*100)}%`;
+        progress++;
+      } else {
+        clearInterval(interval);
+        barLine.textContent = `Loading final image: [${"=".repeat(total)}] 100%\n`;
+        flashScreen();
+        resolve();
+      }
+    }, 100);
+  });
 }
 
 // ---------- Flash + show image ----------
@@ -134,22 +136,41 @@ function flashScreen() {
   setTimeout(() => {
     document.body.classList.remove("flash");
     finalImage.style.display = "block";
-    const executed = document.createElement("div");
-    executed.className = "executed";
-    executed.textContent = "PF2026.exe was successfully executed.";
-    terminal.appendChild(executed);
   }, 150);
 }
 
-// ---------- Start after key press ----------
-async function startTerminal() {
-  document.body.removeEventListener("click", startTerminal);
-  document.body.removeEventListener("keydown", startTerminal);
-  runTerminal();
+// ---------- Type executed message ----------
+function typeExecutedMessage(text, delay = 40) {
+  return new Promise(resolve => {
+    const div = document.createElement("div");
+    div.className = "executed";
+    terminal.appendChild(div);
+    let i = 0;
+    function next() {
+      if (i < text.length) {
+        div.textContent += text[i];
+        i++;
+        setTimeout(next, delay);
+      } else {
+        resolve();
+      }
+    }
+    next();
+  });
 }
 
-document.body.addEventListener("click", startTerminal);
-document.body.addEventListener("keydown", startTerminal);
+// ---------- Start loading ----------
+async function startLoading() {
+  pressKey.style.display = "none";
+  document.body.removeEventListener("click", startLoading);
+  document.body.removeEventListener("keydown", startLoading);
+
+  await showLoadingBar();
+  await new Promise(r => setTimeout(r, 500));
+  await typeExecutedMessage("PF2026.exe was successfully executed.");
+}
+
+runTerminal();
 </script>
 </body>
 </html>
