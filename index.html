@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="cs">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -59,20 +59,16 @@ const terminal = document.getElementById("terminal");
 const finalImage = document.getElementById("finalImage");
 const pressKey = document.getElementById("pressKey");
 
-// ---------- Texty ----------
+// ---------- Český text pro úvod ----------
 const introLines = [
   "C:\\FIS> run PF2026.exe",
-  "Initializing PF2026.exe ...",
-  "Connecting to FIS mainframe ...",
-  "Compiling data happiness.dll ... ok",
-  "Loading joy modules ........... done",
-  "Rendering festive vibes ...",
-  "PF 2026 — Faculty of Informatics and Statistics"
+  "Inicializuji PF2026.exe ...",
+  "Připojuji se k hlavnímu systému FIS ...",
+  "Kompiluji modul radosti.dll ... hotovo",
+  "Načítám novoroční data ............ OK",
+  "Vytvářím slavnostní atmosféru ...",
+  "PF 2026 — Fakulta informatiky a statistiky"
 ];
-
-const cursor = document.createElement("span");
-cursor.id = "cursor";
-terminal.appendChild(cursor);
 
 // ---------- Zvuk ----------
 const clickAudioUrl = "https://cdn.pixabay.com/download/audio/2022/03/15/audio_5bfb7b0f24.mp3?filename=typewriter-key-1-117234.mp3";
@@ -116,7 +112,11 @@ function typeLine(line, delay = 40) {
   });
 }
 
-// ---------- Spuštění úvodní sekvence ----------
+const cursor = document.createElement("span");
+cursor.id = "cursor";
+terminal.appendChild(cursor);
+
+// ---------- Úvodní animace ----------
 async function runIntro() {
   for (const line of introLines) {
     await typeLine(line);
@@ -146,25 +146,34 @@ async function showLoadingBar() {
 
   const interval = setInterval(() => {
     if (progress < total) {
-      barLine.textContent = `Loading final image: [${"=".repeat(progress)}${" ".repeat(total - progress)}] ${Math.floor((progress / total)*100)}%`;
+      barLine.textContent = `Generating final output: [${"=".repeat(progress)}${" ".repeat(total - progress)}] ${Math.floor((progress / total)*100)}%`;
       playClick();
       progress++;
     } else {
       clearInterval(interval);
-      barLine.textContent = `Loading final image: [${"=".repeat(total)}] 100%\n`;
+      barLine.textContent = `Generating final output: [${"=".repeat(total)}] 100%\n`;
       flashScreen();
     }
   }, 100);
 }
 
-// ---------- Bliknutí + obrázek ----------
+// ---------- Efekt bliknutí + obrázek ----------
 function flashScreen() {
   document.body.classList.add("flash");
   setTimeout(() => {
     document.body.classList.remove("flash");
     finalImage.style.display = "block";
+    setTimeout(showFinalMessage, 600);
   }, 150);
 }
 
-// ---------- Spuštění po načtení ----------
-win
+// ---------- Závěrečná hláška ----------
+async function showFinalMessage() {
+  await typeLine("PF2026.exe was successfully executed.");
+}
+
+// ---------- Automatický start ----------
+window.addEventListener("DOMContentLoaded", runIntro);
+</script>
+</body>
+</html>
